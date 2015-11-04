@@ -11,11 +11,12 @@ import java.util.Random;
  */
 public class Gameboard extends JPanel
                        implements KeyListener{
-    int[][] board; // Массив хранящий расположение чисел на доске
+   // int[][] board; // Массив хранящий расположение чисел на доске
+    Tile[][] board;
     int cell_height = 100; // размеры клеточки с числом
     int cell_width = 100;
     int yoffset = 110; // Отступ от верха
-    int next; // Следующее число
+    Tile next; // Следующее число
     boolean gameover = false; // Конец игры
     boolean exit = false;   // Выход
     boolean start = false;  // Запуск игры
@@ -30,17 +31,20 @@ public class Gameboard extends JPanel
     public void start(){
         start = true;
         gameover = false;
-        board = new int[4][4];
+        board = new Tile[4][4];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                board[i][j] = 0;
+                board[i][j] = new Tile();
+                board[i][j].setVal(0);
             }
         }
         Random random = new Random();
         int x = random.nextInt(4);
         int y = random.nextInt(4);
-        board[x][y] = random.nextInt(2)+1;
-        next = random.nextInt(2)+1;
+        board[x][y] = new Tile();
+        board[x][y].setVal(random.nextInt(2)+1);
+        next = new Tile();
+        next.setVal(random.nextInt(2)+1);
     }
 
 
@@ -65,7 +69,11 @@ public class Gameboard extends JPanel
 
     public void paintEndGame(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
+        g.setColor(Color.white);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+        g2d.fillRect(0, 0, 400, 540);
         g.setColor(Color.black);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
         g.setFont(new Font("TimesRoman", Font.PLAIN, 40));
         g2d.drawString("You've lost!", 15, 200);
         g2d.drawString("Press space to play!", 15, 240);
@@ -86,43 +94,27 @@ public class Gameboard extends JPanel
         Graphics2D g2d = (Graphics2D) g;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                switch(board[i][j]){
-                    case 1: g2d.setPaint(Color.blue); break;
-                    case 2: g2d.setPaint(Color.red); break;
-                    case 0: g2d.setPaint(Color.gray); break;
-                    default: g2d.setPaint(Color.white); break;
-                }
+                g2d.setPaint(Color.white);
                 Rectangle2D rect = new Rectangle2D.Double(j*cell_width, i*cell_height+yoffset, cell_width, cell_height);
                 g2d.fill(rect);
                 g2d.setColor(Color.black);
                 g2d.draw(rect);
-                if(board[i][j] == 24 || board[i][j] == 48)
-                    g2d.setColor(Color.red);
-                g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
-                if(board[i][j] != 0)
-                    g2d.drawString(board[i][j]+"", j*cell_width+cell_width/2-15, i*cell_height+cell_height/2+15+yoffset);
+                if(board[i][j].val != 0)
+                    g2d.drawImage(board[i][j].sprite, j*cell_width, i*cell_height+yoffset, cell_width, cell_height, this);
             }
         }
     }
 
     public void paintNext(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
-        switch(next){
-            case 1: g2d.setPaint(Color.blue); break;
-            case 2: g2d.setPaint(Color.red); break;
-            case 0: g2d.setPaint(Color.gray); break;
-            default: g2d.setPaint(Color.white); break;
-        }
+        g2d.setPaint(Color.white);
         Rectangle2D rect = new Rectangle2D.Double(150, 5, cell_width, cell_height);
         g2d.fill(rect);
         g2d.setColor(Color.black);
         g2d.draw(rect);
-        g2d.setColor(Color.black);
-        g2d.drawString("NEXT:", 50, cell_height/2+20);
-        if(next == 24 || next == 48)
-            g2d.setColor(Color.red);
         g.setFont(new Font("TimesRoman", Font.PLAIN, 30));
-        g2d.drawString(next+"", cell_width/2-15+150, cell_height/2+20);
+        g2d.drawString("NEXT:", 50, cell_height/2);
+        g2d.drawImage(next.sprite, 150, 5, cell_width, cell_height, this);
     }
 
 
@@ -138,10 +130,10 @@ public class Gameboard extends JPanel
         int val;
 
         if(board[x][y] == board[x1][y1])
-            val = board[x][y] * 2;
+            val = board[x][y].val * 2;
         else
-            val = board[x][y] + board[x1][y1];
-        board[x][y] = val; board[x1][y1] = 0;
+            val = board[x][y].val + board[x1][y1].val;
+        board[x][y].setVal(val); board[x1][y1].setVal(0);
     }
 
     /***
@@ -151,7 +143,7 @@ public class Gameboard extends JPanel
         int k = 0;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
-                if((board[i][j] == board[i][j+1] && board[i][j] > 2) || (board[i][j] + board[i][j+1] == 3) || board[i][j] == 0) {
+                if((board[i][j].val == board[i][j+1].val && board[i][j].val > 2) || (board[i][j].val + board[i][j+1].val == 3) || board[i][j].val == 0) {
                     merge(i, j, i, j + 1, 'l');
                     k++;
                 }
@@ -168,7 +160,7 @@ public class Gameboard extends JPanel
         int k = 0;
         for (int i = 0; i < 4; i++) {
             for (int j = 3; j > 0; j--) {
-                if((board[i][j] == board[i][j-1] && board[i][j] > 2) || (board[i][j] + board[i][j-1] == 3) || board[i][j] == 0){
+                if((board[i][j].val == board[i][j-1].val && board[i][j].val > 2) || (board[i][j].val + board[i][j-1].val == 3) || board[i][j].val == 0){
                     merge(i, j, i, j-1, 'r');
                     k++;
                 }
@@ -185,7 +177,7 @@ public class Gameboard extends JPanel
         int k = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 4; j++) {
-                if((board[i][j] == board[i+1][j] && board[i][j] > 2) || (board[i][j] + board[i+1][j] == 3) || board[i][j] == 0) {
+                if((board[i][j].val == board[i+1][j].val && board[i][j].val > 2) || (board[i][j].val + board[i+1][j].val == 3) || board[i][j].val == 0) {
                     merge(i, j, i + 1, j, 'u');
                     k++;
                 }
@@ -202,7 +194,7 @@ public class Gameboard extends JPanel
         int k = 0;
         for (int i = 3; i > 0; i--) {
             for (int j = 0; j < 4; j++) {
-                if((board[i][j] == board[i-1][j] && board[i][j] > 2) || (board[i][j] + board[i-1][j] == 3) || board[i][j] == 0) {
+                if((board[i][j].val == board[i-1][j].val && board[i][j].val > 2) || (board[i][j].val + board[i-1][j].val == 3) || board[i][j].val == 0) {
                     merge(i, j, i - 1, j, 'd');
                     k++;
                 }
@@ -223,39 +215,39 @@ public class Gameboard extends JPanel
             case 'l': ;
                 while(!generated){
                     int y = random.nextInt(4);
-                    if(board[y][3] == 0){
-                        board[y][3] = next;
+                    if(board[y][3].val == 0){
+                        board[y][3].setVal(next.val);
                         generated = true;
                     }
                 }
             case 'r':
                 while(!generated){
                     int y = random.nextInt(4);
-                    if(board[y][0] == 0){
-                        board[y][0] = next;
+                    if(board[y][0].val == 0){
+                        board[y][0].setVal(next.val);
                         generated = true;
                     }
                 }
             case 'u':
                 while(!generated) {
                     int x = random.nextInt(4);
-                    if (board[3][x] == 0) {
-                        board[3][x] = next;
+                    if (board[3][x].val == 0) {
+                        board[3][x].setVal(next.val);
                         generated = true;
                     }
                 }
             case 'd':
                 while(!generated) {
                     int x = random.nextInt(4);
-                    if (board[0][x] == 0) {
-                        board[0][x] = next;
+                    if (board[0][x].val == 0) {
+                        board[0][x].setVal(next.val);
                         generated = true;
                     }
                 }
         }
         int next1;
-        while((next1 = random.nextInt(3) + 1) == next);
-        next = next1;
+        while((next1 = random.nextInt(3) + 1) == next.val);
+        next.setVal(next1);
         check_endgame();
     }
 
@@ -263,13 +255,13 @@ public class Gameboard extends JPanel
         boolean flag = true;
         for (int i = 0; i < 3 && flag; i++) {
             for (int j = 0; j < 4 && flag; j++) {
-                if((board[i][j] == board[i+1][j] && board[i][j] > 2) || (board[i][j] + board[i+1][j] == 3) || board[i][j] == 0)
+                if((board[i][j].val == board[i+1][j].val && board[i][j].val > 2) || (board[i][j].val + board[i+1][j].val == 3) || board[i][j].val == 0)
                     flag = false;
             }
         }
         for (int i = 0; i < 4 && flag; i++) {
             for (int j = 0; j < 3 && flag; j++) {
-                if((board[i][j] == board[i][j+1] && board[i][j] > 2) || (board[i][j] + board[i][j+1] == 3) || board[i][j] == 0)
+                if((board[i][j].val == board[i][j+1].val && board[i][j].val > 2) || (board[i][j].val + board[i][j+1].val == 3) || board[i][j].val == 0)
                     flag = false;
             }
         }
