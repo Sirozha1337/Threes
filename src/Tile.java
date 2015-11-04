@@ -14,8 +14,8 @@ public class Tile {
     void setVal(int val1){
         val = val1;
         if(val != 0) {
-            String path = "./resources/" + val + ".png";
-            sprite = Toolkit.getDefaultToolkit().getImage(path);
+            String path = "/" + val + ".png";
+            sprite = Toolkit.getDefaultToolkit().getImage(getClass().getResource(path));
         }
     }
 
