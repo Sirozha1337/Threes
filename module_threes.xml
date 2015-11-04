@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_threes" default="compile.module.threes">
+  <dirname property="module.threes.basedir" file="${ant.file.module_threes}"/>
+  
+  <property name="module.jdk.home.threes" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.threes" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.threes" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.threes" value="-encoding windows-1251 -source 8 ${compiler.args}"/>
+  
+  <property name="threes.output.dir" value="${module.threes.basedir}/out/production/Threes"/>
+  <property name="threes.testoutput.dir" value="${module.threes.basedir}/out/test/Threes"/>
+  
+  <path id="threes.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="threes.module.production.classpath">
+    <path refid="${module.jdk.classpath.threes}"/>
+  </path>
+  
+  <path id="threes.runtime.production.module.classpath">
+    <pathelement location="${threes.output.dir}"/>
+  </path>
+  
+  <path id="threes.module.classpath">
+    <path refid="${module.jdk.classpath.threes}"/>
+    <pathelement location="${threes.output.dir}"/>
+  </path>
+  
+  <path id="threes.runtime.module.classpath">
+    <pathelement location="${threes.testoutput.dir}"/>
+    <pathelement location="${threes.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.threes">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.threes">
+    <patternset refid="excluded.from.module.threes"/>
+  </patternset>
+  
+  <path id="threes.module.sourcepath">
+    <dirset dir="${module.threes.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.threes" depends="compile.module.threes.production,compile.module.threes.tests" description="Compile module Threes"/>
+  
+  <target name="compile.module.threes.production" depends="register.custom.compilers" description="Compile module Threes; production classes">
+    <mkdir dir="${threes.output.dir}"/>
+    <javac2 destdir="${threes.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.threes}/javac">
+      <compilerarg line="${compiler.args.threes}"/>
+      <bootclasspath refid="threes.module.bootclasspath"/>
+      <classpath refid="threes.module.production.classpath"/>
+      <src refid="threes.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.threes"/>
+    </javac2>
+    
+    <copy todir="${threes.output.dir}">
+      <fileset dir="${module.threes.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.threes.tests" depends="register.custom.compilers,compile.module.threes.production" description="compile module Threes; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.threes" description="cleanup module">
+    <delete dir="${threes.output.dir}"/>
+    <delete dir="${threes.testoutput.dir}"/>
+  </target>
+</project>

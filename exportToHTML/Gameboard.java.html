@@ -1,0 +1,286 @@
+<html>
+<head>
+<title>Gameboard.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: rgb(0,0,0); font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { }
+.s2 { color: rgb(128,128,128); font-style: italic; }
+.s3 { color: rgb(0,0,255); }
+.s4 { color: rgb(128,128,128); font-weight: bold; font-style: italic; }
+.s5 { color: rgb(0,128,0); font-weight: bold; }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#C0C0C0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+Gameboard.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+
+<span class="s0">import </span><span class="s1">javax.swing.*; 
+</span><span class="s0">import </span><span class="s1">java.awt.*; 
+</span><span class="s0">import </span><span class="s1">java.awt.event.KeyEvent; 
+</span><span class="s0">import </span><span class="s1">java.awt.event.KeyListener; 
+</span><span class="s0">import </span><span class="s1">java.awt.geom.Rectangle2D; 
+</span><span class="s0">import </span><span class="s1">java.util.Random; 
+ 
+</span><span class="s2">/** 
+ * Created by Sirozha on 03.11.2015. 
+ */</span><span class="s1"> 
+</span><span class="s0">public class </span><span class="s1">Gameboard </span><span class="s0">extends </span><span class="s1">JPanel 
+                       </span><span class="s0">implements </span><span class="s1">KeyListener{ 
+    </span><span class="s0">int</span><span class="s1">[][] board; 
+    </span><span class="s0">int </span><span class="s1">cell_height = </span><span class="s3">100</span><span class="s1">; 
+    </span><span class="s0">int </span><span class="s1">cell_width = </span><span class="s3">100</span><span class="s1">; 
+    </span><span class="s0">int </span><span class="s1">yoffset = </span><span class="s3">110</span><span class="s1">; 
+    </span><span class="s0">int </span><span class="s1">next; 
+    </span><span class="s0">boolean </span><span class="s1">gameover = </span><span class="s0">false</span><span class="s1">; 
+    Gameboard(){ 
+        board = </span><span class="s0">new int</span><span class="s1">[</span><span class="s3">4</span><span class="s1">][</span><span class="s3">4</span><span class="s1">]; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">4</span><span class="s1">; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">4</span><span class="s1">; j++) { 
+                board[i][j] = </span><span class="s3">0</span><span class="s1">; 
+            } 
+        } 
+        Random random = </span><span class="s0">new </span><span class="s1">Random(); 
+        </span><span class="s0">int </span><span class="s1">x = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+        </span><span class="s0">int </span><span class="s1">y = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+        board[x][y] = random.nextInt(</span><span class="s3">2</span><span class="s1">)+</span><span class="s3">1</span><span class="s1">; 
+        next = random.nextInt(</span><span class="s3">2</span><span class="s1">)+</span><span class="s3">1</span><span class="s1">; 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">paintComponent(Graphics g){ 
+        </span><span class="s0">super</span><span class="s1">.paintComponent(g); 
+        paintGameBoard(g); 
+        paintNext(g); 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Рисует игровое поле 
+     * </span><span class="s4">@param </span><span class="s2">g 
+     */</span><span class="s1"> 
+    </span><span class="s0">public void </span><span class="s1">paintGameBoard(Graphics g){ 
+        Graphics2D g2d = (Graphics2D) g; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">4</span><span class="s1">; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">4</span><span class="s1">; j++) { 
+                </span><span class="s0">switch</span><span class="s1">(board[i][j]){ 
+                    </span><span class="s0">case </span><span class="s3">1</span><span class="s1">: g2d.setPaint(Color.blue); </span><span class="s0">break</span><span class="s1">; 
+                    </span><span class="s0">case </span><span class="s3">2</span><span class="s1">: g2d.setPaint(Color.red); </span><span class="s0">break</span><span class="s1">; 
+                    </span><span class="s0">case </span><span class="s3">0</span><span class="s1">: g2d.setPaint(Color.gray); </span><span class="s0">break</span><span class="s1">; 
+                    </span><span class="s0">default</span><span class="s1">: g2d.setPaint(Color.white); </span><span class="s0">break</span><span class="s1">; 
+                } 
+                Rectangle2D rect = </span><span class="s0">new </span><span class="s1">Rectangle2D.Double(j*cell_width, i*cell_height+yoffset, cell_width, cell_height); 
+                g2d.fill(rect); 
+                g2d.setColor(Color.black); 
+                g2d.draw(rect); 
+                </span><span class="s0">if</span><span class="s1">(board[i][j] == </span><span class="s3">24 </span><span class="s1">|| board[i][j] == </span><span class="s3">48</span><span class="s1">) 
+                    g2d.setColor(Color.red); 
+                g.setFont(</span><span class="s0">new </span><span class="s1">Font(</span><span class="s5">&quot;TimesRoman&quot;</span><span class="s1">, Font.PLAIN, </span><span class="s3">30</span><span class="s1">)); 
+                g2d.drawString(board[i][j]+</span><span class="s5">&quot;&quot;</span><span class="s1">, j*cell_width+cell_width/</span><span class="s3">2</span><span class="s1">-</span><span class="s3">15</span><span class="s1">, i*cell_height+cell_height/</span><span class="s3">2</span><span class="s1">+</span><span class="s3">15</span><span class="s1">+yoffset); 
+            } 
+        } 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">paintNext(Graphics g){ 
+        Graphics2D g2d = (Graphics2D) g; 
+        </span><span class="s0">switch</span><span class="s1">(next){ 
+            </span><span class="s0">case </span><span class="s3">1</span><span class="s1">: g2d.setPaint(Color.blue); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">case </span><span class="s3">2</span><span class="s1">: g2d.setPaint(Color.red); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">case </span><span class="s3">0</span><span class="s1">: g2d.setPaint(Color.gray); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">default</span><span class="s1">: g2d.setPaint(Color.white); </span><span class="s0">break</span><span class="s1">; 
+        } 
+        Rectangle2D rect = </span><span class="s0">new </span><span class="s1">Rectangle2D.Double(</span><span class="s3">150</span><span class="s1">, </span><span class="s3">5</span><span class="s1">, cell_width, cell_height); 
+        g2d.fill(rect); 
+        g2d.setColor(Color.black); 
+        g2d.draw(rect); 
+        g2d.setColor(Color.black); 
+        g2d.drawString(</span><span class="s5">&quot;NEXT:&quot;</span><span class="s1">, </span><span class="s3">50</span><span class="s1">, cell_height/</span><span class="s3">2</span><span class="s1">+</span><span class="s3">20</span><span class="s1">); 
+        </span><span class="s0">if</span><span class="s1">(next == </span><span class="s3">24 </span><span class="s1">|| next == </span><span class="s3">48</span><span class="s1">) 
+            g2d.setColor(Color.red); 
+        g.setFont(</span><span class="s0">new </span><span class="s1">Font(</span><span class="s5">&quot;TimesRoman&quot;</span><span class="s1">, Font.PLAIN, </span><span class="s3">30</span><span class="s1">)); 
+        g2d.drawString(next+</span><span class="s5">&quot;&quot;</span><span class="s1">, cell_width/</span><span class="s3">2</span><span class="s1">-</span><span class="s3">15</span><span class="s1">+</span><span class="s3">150</span><span class="s1">, cell_height/</span><span class="s3">2</span><span class="s1">+</span><span class="s3">20</span><span class="s1">); 
+    } 
+ 
+ 
+    </span><span class="s2">/*** 
+     * Склеивает два числа в одно 
+     * </span><span class="s4">@param </span><span class="s2">x 
+     * </span><span class="s4">@param </span><span class="s2">y 
+     * </span><span class="s4">@param </span><span class="s2">x1 
+     * </span><span class="s4">@param </span><span class="s2">y1 
+     * </span><span class="s4">@param </span><span class="s2">d 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">merge(</span><span class="s0">int </span><span class="s1">x, </span><span class="s0">int </span><span class="s1">y, </span><span class="s0">int </span><span class="s1">x1, </span><span class="s0">int </span><span class="s1">y1, </span><span class="s0">char </span><span class="s1">d){ 
+        </span><span class="s0">int </span><span class="s1">val; 
+ 
+        </span><span class="s0">if</span><span class="s1">(board[x][y] == board[x1][y1]) 
+            val = board[x][y] * </span><span class="s3">2</span><span class="s1">; 
+        </span><span class="s0">else</span><span class="s1"> 
+            val = board[x][y] + board[x1][y1]; 
+        board[x][y] = val; board[x1][y1] = </span><span class="s3">0</span><span class="s1">; 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Сдвиг чисел влево 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">move_left(){ 
+        </span><span class="s0">int </span><span class="s1">k = </span><span class="s3">0</span><span class="s1">; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">4</span><span class="s1">; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">3</span><span class="s1">; j++) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i][j+</span><span class="s3">1</span><span class="s1">] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i][j+</span><span class="s3">1</span><span class="s1">] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">) { 
+                    merge(i, j, i, j + </span><span class="s3">1</span><span class="s1">, </span><span class="s5">'l'</span><span class="s1">); 
+                    k++; 
+                } 
+            } 
+        } 
+        </span><span class="s0">if</span><span class="s1">(k &gt; </span><span class="s3">0</span><span class="s1">) 
+            generate(</span><span class="s5">'l'</span><span class="s1">); 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Сдвиг чисел вправо 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">move_right(){ 
+        </span><span class="s0">int </span><span class="s1">k = </span><span class="s3">0</span><span class="s1">; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">4</span><span class="s1">; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">3</span><span class="s1">; j &gt; </span><span class="s3">0</span><span class="s1">; j--) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i][j-</span><span class="s3">1</span><span class="s1">] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i][j-</span><span class="s3">1</span><span class="s1">] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">){ 
+                    merge(i, j, i, j-</span><span class="s3">1</span><span class="s1">, </span><span class="s5">'r'</span><span class="s1">); 
+                    k++; 
+                } 
+            } 
+        } 
+        </span><span class="s0">if</span><span class="s1">(k &gt; </span><span class="s3">0</span><span class="s1">) 
+            generate(</span><span class="s5">'r'</span><span class="s1">); 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Сдвиг чисел вверх 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">move_up(){ 
+        </span><span class="s0">int </span><span class="s1">k = </span><span class="s3">0</span><span class="s1">; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">3</span><span class="s1">; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">4</span><span class="s1">; j++) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i+</span><span class="s3">1</span><span class="s1">][j] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i+</span><span class="s3">1</span><span class="s1">][j] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">) { 
+                    merge(i, j, i + </span><span class="s3">1</span><span class="s1">, j, </span><span class="s5">'u'</span><span class="s1">); 
+                    k++; 
+                } 
+            } 
+        } 
+        </span><span class="s0">if</span><span class="s1">(k &gt; </span><span class="s3">0</span><span class="s1">) 
+            generate(</span><span class="s5">'u'</span><span class="s1">); 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Сдвиг чисел вниз 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">move_down(){ 
+        </span><span class="s0">int </span><span class="s1">k = </span><span class="s3">0</span><span class="s1">; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">3</span><span class="s1">; i &gt; </span><span class="s3">0</span><span class="s1">; i--) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">4</span><span class="s1">; j++) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i-</span><span class="s3">1</span><span class="s1">][j] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i-</span><span class="s3">1</span><span class="s1">][j] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">) { 
+                    merge(i, j, i - </span><span class="s3">1</span><span class="s1">, j, </span><span class="s5">'d'</span><span class="s1">); 
+                    k++; 
+                } 
+            } 
+        } 
+        </span><span class="s0">if</span><span class="s1">(k &gt; </span><span class="s3">0</span><span class="s1">) 
+            generate(</span><span class="s5">'d'</span><span class="s1">); 
+    } 
+ 
+    </span><span class="s2">/*** 
+     * Генерирует новое число 
+     * </span><span class="s4">@param </span><span class="s2">d - в какую сторону был произведен сдвиг 
+     */</span><span class="s1"> 
+    </span><span class="s0">void </span><span class="s1">generate(</span><span class="s0">char </span><span class="s1">d){ 
+        </span><span class="s0">boolean </span><span class="s1">generated = </span><span class="s0">false</span><span class="s1">; 
+        Random random = </span><span class="s0">new </span><span class="s1">Random(); 
+        </span><span class="s0">switch</span><span class="s1">(d){ 
+            </span><span class="s0">case </span><span class="s5">'l'</span><span class="s1">: ; 
+                </span><span class="s0">while</span><span class="s1">(!generated){ 
+                    </span><span class="s0">int </span><span class="s1">y = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+                    </span><span class="s0">if</span><span class="s1">(board[y][</span><span class="s3">3</span><span class="s1">] == </span><span class="s3">0</span><span class="s1">){ 
+                        board[y][</span><span class="s3">3</span><span class="s1">] = next; 
+                        generated = </span><span class="s0">true</span><span class="s1">; 
+                    } 
+                } 
+            </span><span class="s0">case </span><span class="s5">'r'</span><span class="s1">: 
+                </span><span class="s0">while</span><span class="s1">(!generated){ 
+                    </span><span class="s0">int </span><span class="s1">y = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+                    </span><span class="s0">if</span><span class="s1">(board[y][</span><span class="s3">0</span><span class="s1">] == </span><span class="s3">0</span><span class="s1">){ 
+                        board[y][</span><span class="s3">0</span><span class="s1">] = next; 
+                        generated = </span><span class="s0">true</span><span class="s1">; 
+                    } 
+                } 
+            </span><span class="s0">case </span><span class="s5">'u'</span><span class="s1">: 
+                </span><span class="s0">while</span><span class="s1">(!generated) { 
+                    </span><span class="s0">int </span><span class="s1">x = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+                    </span><span class="s0">if </span><span class="s1">(board[</span><span class="s3">3</span><span class="s1">][x] == </span><span class="s3">0</span><span class="s1">) { 
+                        board[</span><span class="s3">3</span><span class="s1">][x] = next; 
+                        generated = </span><span class="s0">true</span><span class="s1">; 
+                    } 
+                } 
+            </span><span class="s0">case </span><span class="s5">'d'</span><span class="s1">: 
+                </span><span class="s0">while</span><span class="s1">(!generated) { 
+                    </span><span class="s0">int </span><span class="s1">x = random.nextInt(</span><span class="s3">4</span><span class="s1">); 
+                    </span><span class="s0">if </span><span class="s1">(board[</span><span class="s3">0</span><span class="s1">][x] == </span><span class="s3">0</span><span class="s1">) { 
+                        board[</span><span class="s3">0</span><span class="s1">][x] = next; 
+                        generated = </span><span class="s0">true</span><span class="s1">; 
+                    } 
+                } 
+        } 
+        </span><span class="s0">int </span><span class="s1">next1; 
+        </span><span class="s0">while</span><span class="s1">((next1 = random.nextInt(</span><span class="s3">3</span><span class="s1">) + </span><span class="s3">1</span><span class="s1">) == next); 
+        next = next1; 
+        check_endgame(); 
+    } 
+ 
+    </span><span class="s0">void </span><span class="s1">check_endgame(){ 
+        </span><span class="s0">boolean </span><span class="s1">flag = </span><span class="s0">true</span><span class="s1">; 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">3 </span><span class="s1">&amp;&amp; flag; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">4 </span><span class="s1">&amp;&amp; flag; j++) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i+</span><span class="s3">1</span><span class="s1">][j] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i+</span><span class="s3">1</span><span class="s1">][j] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">) 
+                    flag = </span><span class="s0">false</span><span class="s1">; 
+            } 
+        } 
+        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s3">0</span><span class="s1">; i &lt; </span><span class="s3">4 </span><span class="s1">&amp;&amp; flag; i++) { 
+            </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">j = </span><span class="s3">0</span><span class="s1">; j &lt; </span><span class="s3">3 </span><span class="s1">&amp;&amp; flag; j++) { 
+                </span><span class="s0">if</span><span class="s1">((board[i][j] == board[i][j+</span><span class="s3">1</span><span class="s1">] &amp;&amp; board[i][j] &gt; </span><span class="s3">2</span><span class="s1">) || (board[i][j] + board[i][j+</span><span class="s3">1</span><span class="s1">] == </span><span class="s3">3</span><span class="s1">) || board[i][j] == </span><span class="s3">0</span><span class="s1">) 
+                    flag = </span><span class="s0">false</span><span class="s1">; 
+            } 
+        } 
+ 
+        gameover = flag; 
+        </span><span class="s0">if</span><span class="s1">(flag) 
+            System.out.println(</span><span class="s5">&quot;GAMEOVER&quot;</span><span class="s1">); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">keyPressed(KeyEvent e) { 
+        </span><span class="s0">switch</span><span class="s1">(e.getKeyCode()){ 
+            </span><span class="s0">case </span><span class="s1">KeyEvent.VK_LEFT: move_left(); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">case </span><span class="s1">KeyEvent.VK_RIGHT: move_right(); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">case </span><span class="s1">KeyEvent.VK_UP: move_up(); </span><span class="s0">break</span><span class="s1">; 
+            </span><span class="s0">case </span><span class="s1">KeyEvent.VK_DOWN: move_down(); </span><span class="s0">break</span><span class="s1">; 
+        } 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">keyReleased(KeyEvent e) { 
+ 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">keyTyped(KeyEvent e) { 
+ 
+    } 
+ 
+ 
+} 
+</span></pre>
+</body>
+</html>
