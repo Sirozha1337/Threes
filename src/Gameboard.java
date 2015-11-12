@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
-import static java.lang.Thread.sleep;
 
 /**
  * Created by Sirozha on 03.11.2015.
@@ -238,6 +237,7 @@ public class Gameboard extends JPanel
      * @param d - в какую сторону был произведен сдвиг
      */
     void generate(char d){
+        timer.start();
         boolean generated = false;
         Random random = new Random();
         switch(d){
@@ -340,11 +340,16 @@ public class Gameboard extends JPanel
      */
     @Override
     public void actionPerformed(ActionEvent e) {
+        int timer_stopper = 0;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                board[i][j].animate();
+                if(board[i][j].animate())
+                    timer_stopper++;
             }
         }
         repaint();
+        if(timer_stopper == 16) {
+            timer.stop();
+        }
     }
 }

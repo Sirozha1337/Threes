@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.event.WindowEvent;
 
 /**
  * Created by Sirozha on 03.11.2015.
