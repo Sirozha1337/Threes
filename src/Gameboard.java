@@ -20,7 +20,12 @@ public class Gameboard extends JPanel
     boolean start = false;  // Запуск игры
     Timer timer = new Timer(1000/60, this); // Таймер для анимации, 60 кадров в секунду
 
+    int w, h;
+    static Image  buffer = null;
+
     Gameboard(){
+
+        w = 400;  h = 540;
     }
 
     /*
@@ -49,25 +54,35 @@ public class Gameboard extends JPanel
     }
 
 
+    @Override
+    public void update(Graphics g){
+        paint(g);
+    }
 
     @Override
-    public void paintComponent(Graphics g){
+    public void paint(Graphics g){
         super.paintComponent(g);
+        buffer = createImage(w, h);
+        Graphics screen = buffer.getGraphics();
+        screen.setColor(Color.white);
+        screen.fillRect(0, 0, w, h);
+
         if(start) {
-            paintGameBoard(g);
-            paintTiles(g);
-            paintNext(g);
+            paintGameBoard(screen);
+            paintTiles(screen);
+            paintNext(screen);
         }
         else{
             if(!gameover)
-                paintInvitation(g);
+                paintInvitation(screen);
             else {
-                paintGameBoard(g);
-                paintTiles(g);
-                paintNext(g);
-                paintEndGame(g);
+                paintGameBoard(screen);
+                paintTiles(screen);
+                paintNext(screen);
+                paintEndGame(screen);
             }
         }
+        g.drawImage(buffer, 0, 0, null);
     }
 
     /***
