@@ -10,25 +10,67 @@ import java.util.Random;
  */
 public class Gameboard extends JPanel
                        implements KeyListener, ActionListener{
-    Tile[][] board; // Массив хранящий расположение тайлов на доске
-    int cell_height = 100; // размеры тайла
-    int cell_width = 100;
-    int yoffset = 110; // Отступ от верха окна
-    Tile next; // Следующее число
-    boolean gameover = false; // Конец игры
-    boolean exit = false;   // Выход
-    boolean start = false;  // Запуск игры
-    Timer timer = new Timer(1000/60, this); // Таймер для анимации, 60 кадров в секунду
+    /**
+     * Массив хранящий расположение тайлов на доске
+     */
+    Tile[][] board;
 
-    int w = 405, h = 540; // Размеры окна
-    static Image  buffer = null; // Буффер для двойной буфферизации
+    /**
+     * Высота тайла
+     */
+    int cell_height = 100;
+
+    /**
+     * Ширина тайла
+     */
+    int cell_width = 100;
+
+    /**
+     * Отступ от верха окна
+     */
+    int yoffset = 110;
+
+    /**
+     * Следующее число
+     */
+    Tile next;
+
+    /**
+     * Конец игры
+     */
+    boolean gameover = false;
+
+    /**
+     * Запуск игры
+     */
+    boolean start = false;
+
+    /**
+     * Таймер для анимации, 60 кадров в секунду
+     */
+    Timer timer = new Timer(1000/60, this);
+
+    /**
+     * Ширина окна
+     */
+    int w = 405;
+
+    /**
+     * Высота окна
+     */
+    int h = 540;
+
+    /**
+     * Буффер для двойной буфферизации
+     */
+    static Image  buffer = null;
 
     Gameboard(){
     }
 
-    /*
+    /**
     *   Генерирует начальное состояние игрового поля
-    *   И задает начальные значения некоторых флагов
+    *   и задает начальные значения некоторых флагов
     */
     public void start(){
         start = true;
@@ -57,21 +99,28 @@ public class Gameboard extends JPanel
         paint(g);
     }
 
+    /**
+     * Отрисовывает игровое поле
+     * @param g
+     */
     @Override
     public void paint(Graphics g){
         super.paintComponent(g);
         buffer = createImage(w, h);
-        Graphics screen = buffer.getGraphics();
+        Graphics screen = buffer.getGraphics(); // Двойная буфферизация
         screen.setColor(Color.white);
         screen.fillRect(0, 0, w, h);
 
+        // Если игра не начата и не был достигнут конец игры, рисуем приглашение
         if(!start && !gameover)
              paintInvitation(screen);
+        // Иначе рисуем игровое поле
         else {
             paintGameBoard(screen);
             paintTiles(screen);
             paintNext(screen);
         }
+        // Если был достигнут конец игры, то рисуем предложение сыграть ещё
         if(gameover)
             paintEndGame(screen);
         g.drawImage(buffer, 0, 0, null);
@@ -104,8 +153,8 @@ public class Gameboard extends JPanel
         g2d.drawString("Press space to play!", 15, 200);
     }
 
-    /***
-     * Рисует игровое поле
+    /**
+     * Рисует таблицу
      * @param g
      */
     public void paintGameBoard(Graphics g){
@@ -151,28 +200,25 @@ public class Gameboard extends JPanel
         g2d.drawImage(next.sprite, 150, 5, cell_width, cell_height, this);
     }
 
-    /***
+    /**
      * Склеивает два тайла в один
-     * @param x - координата первого тайла
-     * @param y - координата первого тайла
-     * @param x1 - координата второго тайла
-     * @param y1- координата второго тайла
+     * @param x координата первого тайла
+     * @param y координата первого тайла
+     * @param x1 координата второго тайла
+     * @param y1 координата второго тайла
      */
     void merge(int y, int x, int y1, int x1){
-        int val;
-        val = board[y][x].getVal() + board[y1][x1].getVal();
-        board[y][x].setXY(x1, y1);
-        board[y][x].setVal(val);
-        board[y1][x1].setVal(0);
-        board[y][x].setNewX(x);
+        int val = board[y][x].getVal() + board[y1][x1].getVal(); // Считаем значение переменной val для получившегося тайла
+        board[y][x].setXY(x1, y1); // Выставляем ему координаты для отрисовки
+        board[y][x].setVal(val);   // И новое значение
+        board[y1][x1].setVal(0);   // Обнуляем его предыдущее местоположение
+        board[y][x].setNewX(x);    // Выставляем координаты для анимации
         board[y][x].setNewY(y);
     }
 
 
-
-
-    /***
-     * Сдвиг чисел влево
+    /**
+     * Сдвиг тайлов влево
      */
     void move_left(){
         int k = 0;
@@ -184,12 +230,13 @@ public class Gameboard extends JPanel
                 }
             }
         }
+        // Если хоть один тайл был сдвинут, генерируем новый тайл
         if(k > 0)
             generate('l');
     }
 
-    /***
-     * Сдвиг чисел вправо
+    /**
+     * Сдвиг тайлов вправо
      */
     void move_right(){
         int k = 0;
@@ -201,12 +248,13 @@ public class Gameboard extends JPanel
                 }
             }
         }
-             if(k > 0)
-                 generate('r');
+        // Если хоть один тайл был сдвинут, генерируем новый тайл
+        if(k > 0)
+            generate('r');
     }
 
-    /***
-     * Сдвиг чисел вверх
+    /**
+     * Сдвиг тайлов вверх
      */
     void move_up(){
         int k = 0;
@@ -218,12 +266,13 @@ public class Gameboard extends JPanel
                 }
             }
         }
-            if(k > 0)
-                generate('u');
+        // Если хоть один тайл был сдвинут, генерируем новый тайл
+        if(k > 0)
+            generate('u');
     }
 
-    /***
-     * Сдвиг чисел вниз
+    /**
+     * Сдвиг тайлов вниз
      */
     void move_down(){
         int k = 0;
@@ -235,13 +284,14 @@ public class Gameboard extends JPanel
                 }
             }
         }
-             if(k > 0)
-                generate('d');
+        // Если хоть один тайл был сдвинут, генерируем новый тайл
+        if(k > 0)
+            generate('d');
     }
 
-    /***
-     * Генерирует новое число
-     * @param d - в какую сторону был произведен сдвиг
+    /**
+     * Генерирует новый тайл, в зависимости от того в какую сторону был произведен сдвиг
+     * @param d в какую сторону был произведен сдвиг, 'l' - влево. 'r' - вправо. 'u' - вверх. 'd' - вниз.
      */
     void generate(char d){
         boolean generated = false;
@@ -292,30 +342,34 @@ public class Gameboard extends JPanel
                     }
                 }
         }
+        /* Генерация следующего тайла */
         int next1;
-        while((next1 = random.nextInt(3) + 1) == next.getVal());
+        while((next1 = random.nextInt(3) + 1) == next.getVal()); // Генерирует значение следующего тайла так, чтобы оно не было равно предыдущему
         next.setVal(next1);
         timer.start();
         check_endgame();
     }
 
-    /***
+    /**
      * Проверка произошел ли конец игры
      */
     void check_endgame(){
         boolean flag = true;
+        // Проверяем можно ли соединить тайл[i][j] с тайлом стоящим справа от него
         for (int i = 0; i < 3 && flag; i++) {
             for (int j = 0; j < 4 && flag; j++) {
                 if((board[i][j].getVal() == board[i+1][j].getVal() && board[i][j].getVal() > 2) || (board[i][j].getVal() + board[i+1][j].getVal() == 3) || board[i][j].getVal() == 0)
                     flag = false;
             }
         }
+        // Проверяем можно ли соединить тайл[i][j] с тайлом стоящим снизу от него
         for (int i = 0; i < 4 && flag; i++) {
             for (int j = 0; j < 3 && flag; j++) {
                 if((board[i][j].getVal() == board[i][j+1].getVal() && board[i][j].getVal() > 2) || (board[i][j].getVal() + board[i][j+1].getVal() == 3) || board[i][j].getVal() == 0)
                     flag = false;
             }
         }
+        // На основании этих проверок выставляем необходимые флаги
         gameover = flag;
         start = !flag;
     }
@@ -326,7 +380,9 @@ public class Gameboard extends JPanel
      */
     @Override
     public void keyPressed(KeyEvent e) {
+        // Если игра начата
         if(start){
+            // Сдвигаем тайлы в зависимости от того, какая стрелочка была нажата
             switch(e.getKeyCode()){
                 case KeyEvent.VK_LEFT: move_left(); break;
                 case KeyEvent.VK_RIGHT: move_right(); break;
@@ -335,11 +391,13 @@ public class Gameboard extends JPanel
             }
         }
         else
+        // Иначе начинаем игру при нажатии кнопки 'Space'
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                 start();
             }
+        // При нажатии кнопки 'Esc' окно закрывается
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            exit = true;
+            System.exit(0);
         }
     }
 
@@ -350,7 +408,7 @@ public class Gameboard extends JPanel
     public void keyTyped(KeyEvent e) {}
 
     /**
-     * Каждые x миллисекунд изменяем координаты тайлов для анимации
+     * Каждые 1000/60 миллисекунд изменяет координаты тайлов для анимации
      * @param e
      */
     @Override

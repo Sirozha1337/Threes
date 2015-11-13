@@ -5,10 +5,39 @@ import java.awt.*;
  */
 
 public class Tile{
+    /**
+     * Значение тайла
+     */
     int val;
-    int x, y;
-    int newx, newy;
+
+    /**
+     * Координаты для отрисовки спрайта
+     */
+    int x;
+
+    /**
+     * Координаты для отрисовки спрайта
+     */
+    int y;
+
+    /**
+     * Новые координаты для анимации
+     */
+    int newx;
+
+    /**
+     * Новые координаты для анимации
+     */
+    int newy;
+
+    /**
+     * Спрайт для отрисовки
+     */
     Image sprite;
+
+    /**
+     * Массив спрайтов
+     */
     static Image[] sprites;
 
     /**
@@ -33,7 +62,7 @@ public class Tile{
 
     /**
      * Устанавливает значение переменной val
-     * @param val1
+     * @param val1 новое значение перменной val
      */
     void setVal(int val1){
         val = val1;
