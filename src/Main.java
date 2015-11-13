@@ -8,7 +8,7 @@ public class Main {
         JFrame f = new JFrame();
         Gameboard gameBoard = new Gameboard();
         f.addKeyListener(gameBoard);
-        f.setBounds(30, 30, 400, 540);
+        f.setBounds(30, 30, 405, 540);
         f.setResizable(false);
         f.setContentPane(gameBoard);
         f.setVisible(true);

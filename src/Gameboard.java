@@ -20,12 +20,10 @@ public class Gameboard extends JPanel
     boolean start = false;  // Запуск игры
     Timer timer = new Timer(1000/60, this); // Таймер для анимации, 60 кадров в секунду
 
-    int w, h;
-    static Image  buffer = null;
+    int w = 405, h = 540; // Размеры окна
+    static Image  buffer = null; // Буффер для двойной буфферизации
 
     Gameboard(){
-
-        w = 400;  h = 540;
     }
 
     /*
@@ -67,21 +65,15 @@ public class Gameboard extends JPanel
         screen.setColor(Color.white);
         screen.fillRect(0, 0, w, h);
 
-        if(start) {
+        if(!start && !gameover)
+             paintInvitation(screen);
+        else {
             paintGameBoard(screen);
             paintTiles(screen);
             paintNext(screen);
         }
-        else{
-            if(!gameover)
-                paintInvitation(screen);
-            else {
-                paintGameBoard(screen);
-                paintTiles(screen);
-                paintNext(screen);
-                paintEndGame(screen);
-            }
-        }
+        if(gameover)
+            paintEndGame(screen);
         g.drawImage(buffer, 0, 0, null);
     }
 
@@ -252,7 +244,6 @@ public class Gameboard extends JPanel
      * @param d - в какую сторону был произведен сдвиг
      */
     void generate(char d){
-        timer.start();
         boolean generated = false;
         Random random = new Random();
         switch(d){
@@ -261,7 +252,9 @@ public class Gameboard extends JPanel
                     int y = random.nextInt(4);
                     if(board[y][3].getVal() == 0){
                         board[y][3].setVal(next.getVal());
-                        board[y][3].setXY(3, y);
+                        board[y][3].setXY(4, y);
+                        board[y][3].setNewX(3);
+                        board[y][3].setNewY(y);
                         generated = true;
                     }
                 }
@@ -270,7 +263,9 @@ public class Gameboard extends JPanel
                     int y = random.nextInt(4);
                     if(board[y][0].getVal() == 0){
                         board[y][0].setVal(next.getVal());
-                        board[y][0].setXY(0, y);
+                        board[y][0].setXY(-1, y);
+                        board[y][0].setNewX(0);
+                        board[y][0].setNewY(y);
                         generated = true;
                     }
                 }
@@ -279,7 +274,9 @@ public class Gameboard extends JPanel
                     int x = random.nextInt(4);
                     if (board[3][x].getVal() == 0) {
                         board[3][x].setVal(next.getVal());
-                        board[3][x].setXY(x, 3);
+                        board[3][x].setXY(x, 4);
+                        board[3][x].setNewX(x);
+                        board[3][x].setNewY(3);
                         generated = true;
                     }
                 }
@@ -288,7 +285,9 @@ public class Gameboard extends JPanel
                     int x = random.nextInt(4);
                     if (board[0][x].getVal() == 0) {
                         board[0][x].setVal(next.getVal());
-                        board[0][x].setXY(x, 0);
+                        board[0][x].setXY(x, -1);
+                        board[0][x].setNewX(x);
+                        board[0][x].setNewY(0);
                         generated = true;
                     }
                 }
@@ -296,6 +295,7 @@ public class Gameboard extends JPanel
         int next1;
         while((next1 = random.nextInt(3) + 1) == next.getVal());
         next.setVal(next1);
+        timer.start();
         check_endgame();
     }
 
