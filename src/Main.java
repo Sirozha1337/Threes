@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created by Sirozha on 03.11.2015.
@@ -9,9 +10,10 @@ public class Main {
         Gameboard gameBoard = new Gameboard();
         f.addKeyListener(gameBoard);
         f.setBounds(30, 30, 405, 540);
-        f.setResizable(false);
         f.setContentPane(gameBoard);
+        f.setResizable(false);
         f.setVisible(true);
+        f.setTitle("Threes");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
